@@ -15,12 +15,13 @@ if (cluster.isMaster) {
         cluster.fork();
     });
 } else {
-    const express = require("express");
-    const app = express();
-    const server = require('http').createServer(app);
-    const io = require('socket.io')(server);
+    const express = require("express")
+    const app = express()
+    const server = require('http').createServer(app)
+    const io = require('socket.io')(server)
     require('dotenv').config()
-    const cors = require('cors');
+    const cors = require('cors')
+    const path = require('path')
     const { MongoClient, ObjectID } = require('mongodb')
     const Blockchain = require('./Basic_BlockChain/Blockchain')
     let pCoinBlockChain = new Blockchain(1);
@@ -50,10 +51,7 @@ if (cluster.isMaster) {
     app.use(cors());
     app.use(express.json());
     app.use(express.urlencoded({ extended: false }));
-
-    app.get("/", (_req, res) => {
-        res.sendStatus(200)
-    });
+    app.use(express.static('client/build'))
 
     app.get("/a", async (_req, res) => {
         try {
@@ -66,13 +64,13 @@ if (cluster.isMaster) {
             console.log(e)
         }
     });
-/*
-    app.get("/admin/edit", (_req, res) => {
-        res.sendFile(`${__dirname}/edit.html`);
-    });
-    app.get("/admin/add", (_req, res) => {
-        res.sendFile(`${__dirname}/add.html`);
-    });*/
+    /*
+        app.get("/admin/edit", (_req, res) => {
+            res.sendFile(`${__dirname}/edit.html`);
+        });
+        app.get("/admin/add", (_req, res) => {
+            res.sendFile(`${__dirname}/add.html`);
+        });*/
 
     /*app.get("/list/:id", async (req, res) => {
         try {
@@ -173,6 +171,15 @@ if (cluster.isMaster) {
             console.log(error)
         }
     })*/
+
+    io.on('connection', (socket) => {
+        socket.send('message');
+        console.log('New connetion')
+      });
+
+    app.get('/*', (_, res) => {
+        res.sendFile(path.join(__dirname, './client/build/index.html'))
+    })
 
     server.listen(port, () => {
         console.log(`Worker ${process.pid} started on port: ${port}`);
