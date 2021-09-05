@@ -1,3 +1,6 @@
 [submodule "Basic_BlockChain"]
 	path = Basic_BlockChain
 	url = https://github.com/StephanJ98/Basic_BlockChain.git
+[submodule "pCoin_Web"]
+	path = client
+	url = https://github.com/StephanJ98/pCoin_Web.git

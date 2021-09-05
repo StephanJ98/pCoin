@@ -55,10 +55,18 @@ if (cluster.isMaster) {
         res.sendStatus(200)
     });
 
-    /*app.get("/admin", (_req, res) => {
-        res.sendFile(`${__dirname}/index.html`);
+    app.get("/a", async (_req, res) => {
+        try {
+            const cluster = await connectToDatabase(process.env.MONGODB_URI_PCOIN)
+            const collection = await cluster.collection('Users')
+            const db = await collection.find({}).toArray()
+            return res.json(db[0])
+        } catch (e) {
+            res.sendStatus(503)
+            console.log(e)
+        }
     });
-
+/*
     app.get("/admin/edit", (_req, res) => {
         res.sendFile(`${__dirname}/edit.html`);
     });
